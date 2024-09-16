@@ -1,0 +1,13 @@
+requests
+openai
+pydantic
+langchain
+python-dotenv
+python-dotenv
+fitz
+whisper
+ijson
+setuptools
+PyMuPDF
+reportlab
+markdown
