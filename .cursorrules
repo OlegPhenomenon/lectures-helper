@@ -28,6 +28,10 @@ cloud_native_lessons/1_lecture
 - ...
 
 Если в директории присуствует файл с именем .skip, это означает что при обработке нужно пропустить эту директорию.
+В корне директории лекции также лежат следующие файлы:
+- topic.txt - тема лекции
+- practice_links.txt - ссылки на практические материалы (не обязательно)
+- notes.txt - заметки (не обязательно)
 
 Структура проекта:
 
@@ -47,12 +51,16 @@ lecture_helper/
 │   │   ├── format_lecture_data_processor.py
 │   │   └── summarize_lecture_data_processor.py
 │   │   └── translate_lecture_data_processor.py
+│   │   └── practice_content_processor.py
+│   │   └── generate_lecture_questions_processor.py
 │   ├── factory/
 │   │   ├── __init__.py
 │   │   └── analyzer_factory.py
 │   │   └── format_lecture_data_factory.py
 │   │   └── summarize_lecture_data_factory.py
 │   │   └── translate_lecture_data_factory.py
+│   │   └── generate_lecture_questions_factory.py
+│   │   └── practice_content_factory.py
 │   ├── analyzers/
 │   │   ├── __init__.py
 │   │   ├── ollama_analyzer.py
@@ -63,9 +71,14 @@ lecture_helper/
 │   │   └── openai_format_lecture_data.py
 │   │   └── ollama_translate_lecture_data.py
 │   │   └── openai_translate_lecture_data.py
+│   │   └── ollama_generate_lecture_questions.py
+│   │   └── openai_generate_lecture_questions.py
+│   │   └── ollama_practice_content.py
+│   │   └── openai_practice_content.py
 │   └── utils/
 │       ├── __init__.py
 │       └── text_utils.py
+│       └── file_utils.py
 └── requirements.txt
 └── fonts/
     ├── dejavu-sans/
