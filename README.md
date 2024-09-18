@@ -112,3 +112,12 @@ See `requirements.txt` for a list of required Python packages.
 ## Font
 
 The project uses DejaVu Sans font family for PDF generation. Font files are located in the `fonts/dejavu-sans/` directory.
+
+## How to run
+
+```
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m lecture_processor.main
+```
