@@ -10,13 +10,15 @@ import random
 load_dotenv()
 
 # Изменим расширение файла на .json
-source_data_file_name = 'cloud_native_lessons/1_lecture/source_data.json'
+source_data_file_name = 'courses/cloud_native_lessons/1_lecture/source_data.json'
 
 class OpenAIAnalyzer(SlideAnalyzerBase):
     def __init__(self):
         self.client = OpenAI()
         self.model = "gpt-4o-mini"
         self.prompt = """
+        Ignore all previous instructions.
+
         <task> You are an experienced specialist in finding connections. Your task is to read the description of the slide and the excerpt from the lecture transcript, and determine whether the excerpt from the lecture delivered by the professor relates to this slide (the slide description should help) or most likely to another slide. </task>
 
         <lecture title>
@@ -47,11 +49,6 @@ class OpenAIAnalyzer(SlideAnalyzerBase):
         }}
         </response format>
         """
-        
-    
-    def analyze_slide(self, topic: str, slide_description: str, excerpt: str) -> dict:
-        # Implement single slide analysis if needed
-        pass
 
     def process_batch(self, topic: str, cleaned_text: str, slide_analyses: dict, output_file: str):
         batch_file_name = 'batch_data.jsonl'

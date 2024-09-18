@@ -9,7 +9,9 @@ from .processors.summarize_lecture_processor import SummarizeLectureProcessor
 from .processors.format_lecture_data_processor import FormatLectureDataProcessor
 from .processors.pdf_generation_processor import PDFGenerationProcessor
 from .processors.translate_lecture_data_processor import TranslateLectureDataProcessor
-from .utils.file_utils import get_lecture_directories, get_lecture_files
+from .processors.generate_lecture_questions_processor import GenerateLectureQuestionsProcessor
+from .processors.practice_content_processor import PracticeContentProcessor
+from .utils.file_utils import get_courses_and_lectures, get_lecture_files
 from .config import LectureProcessorConfig
 import os
 
@@ -28,7 +30,7 @@ def build_processing_chain(config, processors):
             last = processor
     return chain
 
-def process_lecture(lecture_dir: str, config: LectureProcessorConfig):
+def process_lecture(lecture_dir: str, config: LectureProcessorConfig, topic: str):
     # Создаем процессоры
     processors = {
         "transcription": TranscriptionProcessor(),
@@ -39,6 +41,8 @@ def process_lecture(lecture_dir: str, config: LectureProcessorConfig):
         "summarize_lecture": SummarizeLectureProcessor(),
         "format_lecture_data": FormatLectureDataProcessor(),
         "translate_lecture_data": TranslateLectureDataProcessor(),
+        "generate_lecture_questions": GenerateLectureQuestionsProcessor(),
+        "practice_content": PracticeContentProcessor(),  # Добавлен новый процессор
         "pdf_generation": PDFGenerationProcessor()
     }
 
@@ -48,7 +52,7 @@ def process_lecture(lecture_dir: str, config: LectureProcessorConfig):
     # Объединяем данные конфигурации и пути к файлам
     initial_data = {
         **lecture_files,
-        "topic": config.topic,
+        "topic": topic,
         "analyzer_type": config.analyzer_type,
         "ollama_url": config.ollama_url,
     }
@@ -69,10 +73,14 @@ def process_lecture(lecture_dir: str, config: LectureProcessorConfig):
 
 def main():
     config = LectureProcessorConfig()
-    lecture_dirs = get_lecture_directories(config.base_path)
+    courses_and_lectures = get_courses_and_lectures(config.base_path)
 
-    for lecture_dir in lecture_dirs:
-        process_lecture(lecture_dir, config)
+    for course_path, lectures in courses_and_lectures:
+        print(f"Обработка курса: {course_path}")
+        for lecture_dir, topic in lectures:
+            print(f"Обработка лекции: {lecture_dir}")
+            print(f"Тема лекции: {topic}")
+            process_lecture(lecture_dir, config, topic)
 
 if __name__ == "__main__":
     main()

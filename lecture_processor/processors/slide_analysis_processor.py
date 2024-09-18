@@ -11,8 +11,8 @@ class SlideAnalysisProcessor(BaseProcessor):
         slide_analyses = load_slide_analyses(data['slide_analyses_path'])
         
         analyzer = AnalyzerFactory.get_analyzer(analyzer_type)
-        analyzer.process_batch(data['topic'], cleaned_text, slide_analyses, data['output_path'])
+        analyzer.process_batch(data['topic'], cleaned_text, slide_analyses, data['lecture_with_slides_path'])
         
-        print(f"Анализ слайдов завершен. Результат сохранен в {data['output_path']}")
+        print(f"Анализ слайдов завершен. Результат сохранен в {data['lecture_with_slides_path']}")
         
         return self._process_next(data)

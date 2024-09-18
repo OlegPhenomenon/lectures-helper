@@ -10,24 +10,26 @@ from collections import defaultdict
 
 load_dotenv()
 
-batch_file_name = "cloud_native_lessons/1_lecture/format_lecture_batch_file.json"
+batch_file_name = "courses/cloud_native_lessons/1_lecture/format_lecture_batch_file.json"
 
 class OpenAIFormatLectureData(SlideAnalyzerBase):
     def __init__(self):
         self.client = OpenAI()
         self.model = "gpt-4o-mini"
         self.prompt = """
-          <task> You are an experienced specialist in text formatting. Problem: we already have a well-formatted and edited text that highlights the core ideas and provides a more informative explanation from the lecture. The problem is that it's broken into fragments, and when you read one fragment, it abruptly jumps to another. Additionally, some headings might be misleading.
-          Your task is to read the provided excerpts from the lecture, remove duplicates, and edit the text so that it reads as a cohesive narrative. You are not supposed to simplify or shorten the information. The idea is not to extract key phrases, as they are not very useful for learning. It's important to present the information in a way that feels like a study guide. In other words, restructure the information so that it doesn't look like fragments from notes, but reads as a unified guide based on the professor's lecture material.
+          Ignore all previous instructions.
 
-          I will be using this to prepare for my exam, so don't let me down! 
-          Please, don't write conclusions, only the text of the lecture.
+          <task> You are an experienced specialist in text formatting. The problem: we already have a well-formatted and edited text that highlights the key ideas and provides more informative explanations from the lecture. The issue is that it's broken into fragments, and when you read one fragment, the text abruptly jumps to another. Additionally, some headings might be misleading.
+          Your task is to read the provided excerpts from the lecture, remove duplicates, and edit the text so that it reads as a cohesive narrative. You should not simplify or shorten the information. The goal is not to extract key phrases, as they are not very useful for learning. It is important to present the information in a way that reads like a study guide. You need to eliminate multiple headings. If you see that some headings are similar, it makes sense to combine the content so that it forms a logical flow of reasoning, rather than jumping from one topic to another. The sequence should be logical.
+
+          I will be using this to prepare for my exam, so don't let me down!
+          Please, don't write conclusions, only the lecture text.
           </task>
 
           <excerpts from the professor's lecture> {excerpt} </excerpts from the professor's lecture>
 
-          <response format> While generating output, the model produces reasoning inside <thinking></thinking> tags. If the model detects an error, it uses <reflection></reflection> tags for self-correction before continuing.
-          Only after self-correction, the model provides the final answer enclosed in <output></output> tags.
+          <response format> While generating the output, the model should produce reasoning inside <thinking></thinking> tags. If the model detects an error, it should use <reflection></reflection> tags for self-correction before proceeding.
+          Only after self-correction, the model should provide the final answer enclosed in <output></output> tags.
 
           Return JSON with the following structure:
 
@@ -90,9 +92,9 @@ class OpenAIFormatLectureData(SlideAnalyzerBase):
         merged_data = []
         for key, group in grouped_data.items():
             merged_outputs = []
-            for i in range(0, len(group), 3):
+            for i in range(0, len(group), 8):
                 merged_output = ""
-                for item in group[i:i+5]:
+                for item in group[i:i+8]:
                     merged_output += item['output'] + "\n\n"
                 merged_outputs.append(merged_output.strip())
             

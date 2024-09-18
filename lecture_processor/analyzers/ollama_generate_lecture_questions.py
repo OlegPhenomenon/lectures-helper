@@ -1,36 +1,27 @@
 import requests
 import json
 from .slide_analyzer_base import SlideAnalyzerBase
-from ..utils.text_utils import split_text_to_the_chunk
 import re
-import random
-class OllamaSummarizeLecture(SlideAnalyzerBase):
+
+class OllamaGenerateLectureQuestions(SlideAnalyzerBase):
     def __init__(self, ollama_url: str = "http://localhost:11434"):
         self.ollama_url = ollama_url
         self.model_name = "gemma2:latest"
         self.prompt = """
-            Ignore all previous instructions.
+            Игнорируй все предыдущии инструкции.
         
-          <task> You are an experienced specialist in extracting the main essence from the text. Your task is to read the provided lecture excerpts, remove duplicates, and highlight only the core ideas and key information that will help me better understand the lecture for learning purposes.
-          You should not just list key phrases from the text, as that won't be very useful for my learning. It's important to present the information in a way that feels like a study guide. In other words, you need to simplify, structure, and make the lecturer's speech easy to digest and useful for learning. </task>
+          Перед тобой представлен текст лекции, который был преобразован в некое пособие. Твоя задача сгенерировать вопросы для этого пособия. Вопросы должны быть направлены на проверку знаний студентов по данной лекции. Вопросы касаются только конкретно материала лекции, если в лекции присуствуют какие-то организованные моменты и прочие которые не относятся к лекции, то не учитывай их:
+          
+          {excerpt}
 
-          <excerpts from the professor's lecture> {excerpt} </excerpts from the professor's lecture>
-
-          <response format> While generating output, the model produces reasoning inside `thinking` key. If the model detects an error, it uses `reflection` key for self-correction before continuing.
-          Only after self-correction, the model provides the final answer enclosed in `output` key.
-
-          Return JSON with the following structure:
-
+        <response format>
           json
           {{
-              "thinking": string,  // model's reasoning
-              "reflection": string,  // model's self-correction
-              "output": string,  // formatted response
+              "questions": array[string]  // array of questions
           }}
           </response format>
         """
         
-
     def analyze_slide(self, excerpt: str) -> dict:
         response = requests.post(
             f"{self.ollama_url}/api/generate",
@@ -68,24 +59,40 @@ class OllamaSummarizeLecture(SlideAnalyzerBase):
                 print("Отсутствует ключ 'response' в ответе модели")
         
         return None
-    
+        
     def process_batch(self, input_file: str, output_file: str):
         with open(input_file, 'r') as f:
             data = json.load(f)
-
+            
+        all_content = []
+        
+        processed_data = self._process_data(data)
+        
+        for item in processed_data:
+            content = processed_data[item]
+            slider_name = item
+            
+            result = self.analyze_slide(content)
+            result['slide_number'] = slider_name
+            all_content.append(result)
+            
+        with open(output_file, 'w', encoding='utf-8') as f:
+            json.dump(all_content, f, ensure_ascii=False, indent=2)
+  
+  
+    def _parse_slide_number(self, slide_number):
+        return slide_number[:-6].split('.')[0].replace('_analysis', '')
+      
+    def _process_data(self, data):
+        processed_data = {}
         for item in data:
-          slider_name = item
-          content = '... '.join(data[item])
-          chunks = split_text_to_the_chunk(content, 6000, 100)
-          all_content = []
-          
-          for chunk in chunks:
-              last_5_hex_digits = ''.join(random.choices('0123456789ABCDEF', k=5))
-              result = self.analyze_slide(chunk)
-              
-              if result:
-                  result['slide_number'] = f"{slider_name}-{last_5_hex_digits}"
-                  all_content.append(result)
-                  
-          with open(output_file, 'w') as f:
-              json.dump(all_content, f, indent=2)
+            slide_number = item.get('slide_number', '')
+            output = item.get('output', '')
+            
+            parsed_slide_number = self._parse_slide_number(slide_number)
+            
+            if parsed_slide_number in processed_data:
+                processed_data[parsed_slide_number] += "\n" + output
+            else:
+                processed_data[parsed_slide_number] = output
+        return processed_data

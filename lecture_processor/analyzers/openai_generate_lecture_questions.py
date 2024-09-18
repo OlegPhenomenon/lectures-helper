@@ -10,23 +10,23 @@ from collections import defaultdict
 
 load_dotenv()
 
-batch_file_name = "courses/cloud_native_lessons/1_lecture/translate_lecture_batch_file.json"
+batch_file_name = "courses/cloud_native_lessons/1_lecture/questions_lecture_batch_file.json"
 
-class OpenAITranslateLectureData(SlideAnalyzerBase):
+class OpenAIGenerateLectureQuestions(SlideAnalyzerBase):
     def __init__(self):
         self.client = OpenAI()
         self.model = "gpt-4o-mini"
         self.prompt = """
-        Ignore all previous instructions.
-
-          Please translate the following text into Russian. Do not format the text in any way, just translate it. But if text is in html format, please translate it into markdown format:
+        Игнорируй все предыдущии инструкции.
+        
+          Перед тобой представлен текст лекции, который был преобразован в некое пособие. Твоя задача сгенерировать вопросы для этого пособия. Вопросы должны быть направлены на проверку знаний студентов по данной лекции. Вопросы касаются только конкретно материала лекции, если в лекции присуствуют какие-то организованные моменты и прочие которые не относятся к лекции, то не учитывай их:
           
           {excerpt}
 
-        <response format>
+          <response format>
           json
           {{
-              "output": string  // translated text in markdown format
+              "questions": array[string]  // array of questions
           }}
           </response format>
         """
@@ -67,15 +67,18 @@ class OpenAITranslateLectureData(SlideAnalyzerBase):
 
       os.remove(batch_file_name)
     
+
     def create_batch_file(self, input_file: str):
         with open(input_file, 'r') as f:
             data = json.load(f)
             
         tasks = []
         
-        for item in data:
-            content = item['output']
-            slider_name = item['slide_number']
+        processed_data = self._process_data(data)
+        
+        for item in processed_data:
+            content = processed_data[item]
+            slider_name = item
             
             task = {
                 "custom_id": slider_name,
@@ -108,3 +111,19 @@ class OpenAITranslateLectureData(SlideAnalyzerBase):
         return self.client.files.create(
             file=open(f"{batch_file_name}", "rb"), purpose="batch"
         )
+
+    def _parse_slide_number(self, slide_number):
+        return slide_number[:-6].split('.')[0].replace('_analysis', '')
+      
+    def _process_data(self, data):
+        processed_data = {}
+        for item in data:
+            slide_number = item.get('slide_number', '')
+            output = item.get('output', '')
+            
+            parsed_slide_number = self._parse_slide_number(slide_number)
+            if parsed_slide_number in processed_data:
+                processed_data[parsed_slide_number] += "\n" + output
+            else:
+                processed_data[parsed_slide_number] = output
+        return processed_data

@@ -11,3 +11,7 @@ setuptools
 PyMuPDF
 reportlab
 markdown
+beautifulsoup4
+markdown2pdf
+weasyprint
+html2text

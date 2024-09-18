@@ -1,5 +1,8 @@
 ./lecture_processor/env
 .env
-cloud_native_lessons/1_lecture
+courses/cloud_native_lessons/1_lecture
 another_videos
 venv
+ai
+soap
+

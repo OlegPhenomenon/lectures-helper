@@ -16,6 +16,8 @@ class OpenAISummarizeLecture(SlideAnalyzerBase):
         self.client = OpenAI()
         self.model = "gpt-4o-mini"
         self.prompt = """
+        Ignore all previous instructions.
+        
           <task> You are an experienced specialist in extracting the main essence from the text. Your task is to read the provided lecture excerpts, remove duplicates, and highlight only the core ideas and key information that will help me better understand the lecture for learning purposes.
           You should not just list key phrases from the text, as that won't be very useful for my learning. It's important to present the information in a way that feels like a study guide. In other words, you need to simplify, structure, and make the lecturer's speech easy to digest and useful for learning. </task>
 
