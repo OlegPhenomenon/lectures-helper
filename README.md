@@ -69,8 +69,14 @@ lecture_helper/
     │   ├── DejaVuSans-Oblique.ttf
     │   ├── DejaVuSans-BoldOblique.ttf
     │   └── DejaVuSans-ExtraLight.ttf
-└── cloud_native_lessons/
-    ├── 1_lecture/
+└── courses/
+    ├── some_course/
+    │   ├── 1_lecture/
+    │   │   ├── lecture_video.mp4
+    │   │   ├── lecture_slides.pdf
+    │   │   ├── topic.txt
+    │   │   ├── practice_links.txt
+    │   │   ├── notes.txt
 ```
 
 ## Main Components
@@ -87,6 +93,8 @@ lecture_helper/
    - `topic.txt`: Lecture topic
    - `practice_links.txt`: Links to practical materials (optional)
    - `notes.txt`: Additional notes (optional)
+   - `lecture_video.mp4`: Video lecture
+   - `lecture_slides.pdf`: PDF presentation
 3. Run the main script to process the lecture materials
 4. The script will generate a final PDF file with combined materials, including:
    - Slides with corresponding lecture content
