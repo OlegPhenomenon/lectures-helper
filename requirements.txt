@@ -15,3 +15,5 @@ beautifulsoup4
 markdown2pdf
 weasyprint
 html2text
+wheel
+rdflib<7

@@ -90,10 +90,15 @@ class OllamaAnalyzer(SlideAnalyzerBase):
         all_content = []
         source_data = []
 
-        for chunk in chunks[:10]:
-            for slide in sorted_slides[:5]:
+        for chunk in chunks:
+            for slide in sorted_slides:
                 current_slide, current_analysis = slide
                 last_3_hex_digits = ''.join(random.choices('0123456789ABCDEF', k=3))
+                
+                print('???')
+                print(f"Analyzing slide {current_slide} with chunk {chunk}")
+                print('???')
+                
                 
                 result = self.analyze_slide(topic, current_analysis['description'], chunk)
                 if result:

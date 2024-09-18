@@ -1,4 +1,6 @@
 # python -m lecture_processor.main
+# !pip install git+https://github.com/openai/whisper.git
+# !sudo apt update && sudo apt install ffmpeg
 
 from .processors.transcription_processor import TranscriptionProcessor
 from .processors.pdf_to_image_processor import PDFToImageProcessor

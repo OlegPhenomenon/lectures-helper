@@ -119,5 +119,7 @@ The project uses DejaVu Sans font family for PDF generation. Font files are loca
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+pip install git+https://github.com/openai/whisper.git
+sudo apt update && sudo apt install ffmpeg
 python -m lecture_processor.main
 ```
