@@ -114,17 +114,26 @@ class PDFGenerationProcessor(BaseProcessor):
     def _process_data(self, data):
         processed_data = {}
         for item in data:
-            slide_number = item.get('slide_number', '')
+            slide_number = self._parse_slide_number(item.get('slide_number', ''))
             output = item.get('output', '')
             
-            processed_data[slide_number] = output
+            if slide_number in processed_data:
+                processed_data[slide_number] += "\n\n" + output
+            else:
+                processed_data[slide_number] = output
         
         return processed_data
 
     def _parse_slide_number(self, slide_number):
-        return slide_number[:-11].split('.')[0].replace('_analysis', '')
+        # Извлекаем номер страницы из ключа
+        match = re.search(r'page_(\d+)', slide_number)
+        if match:
+            return f"page_{match.group(1)}"
+        return slide_number  # Возвращаем исходное значение, если парсинг не удался
 
     def _create_pdf(self, processed_data, questions_data, output_path, images_dir, notes_path, practice_translated_path):
+        print("Processed data keys:", processed_data.keys())
+        
         doc = SimpleDocTemplate(output_path, pagesize=letter, encoding='utf-8')
         story = []
 
@@ -132,17 +141,17 @@ class PDFGenerationProcessor(BaseProcessor):
             story.append(Paragraph(processed_data['title'], self.styles['Heading1']))
             story.append(Spacer(1, 12))
 
-        # Сортируем ключи processed_data, чтобы обрабатывать слайды в правильном порядке
         sorted_keys = sorted(processed_data.keys(), key=lambda x: int(x.split('_')[1]) if x != 'title' else 0)
 
         for key in sorted_keys:
+            print(f"Processing key: {key}")
+
             if key == 'title':
                 continue
 
             slide_number = key.split('_')[1]
             content = processed_data[key]
 
-            # Добавляем изображение слайда, если оно существует
             image_file = f"page_{slide_number}.png"
             image_path = os.path.join(images_dir, image_file)
             if os.path.exists(image_path):
@@ -150,21 +159,19 @@ class PDFGenerationProcessor(BaseProcessor):
                 story.append(img)
                 story.append(Spacer(1, 12))
 
-            # Добавляем контент слайда
             html_content = markdown.markdown(content)
             flowables = self._html_to_reportlab(html_content)
             story.extend(flowables)
             story.append(Spacer(1, 12))
 
-            # Добавляем вопросы для слайда
-            questions = self._get_questions_for_slide(questions_data, int(slide_number))
-            if questions:
-                story.append(Paragraph("Вопросы:", self.styles['Heading3']))
-                for question in questions:
-                    story.append(Paragraph(f"• {question}", self.styles['BulletPoint']))
-                story.append(Spacer(1, 12))
+        # Добавляем вопросы в конце материала
+        if questions_data and "questions" in questions_data:
+            story.append(PageBreak())
+            story.append(Paragraph("Вопросы по лекции:", self.styles['Heading1']))
+            for i, question in enumerate(questions_data["questions"], 1):
+                story.append(Paragraph(f"{i}. {question}", self.styles['BulletPoint']))
+            story.append(Spacer(1, 12))
 
-        # Добавляем практический материал
         if practice_translated_path and os.path.exists(practice_translated_path):
             story.append(PageBreak())
             story.append(Paragraph("Практический материал", self.styles['Heading1']))

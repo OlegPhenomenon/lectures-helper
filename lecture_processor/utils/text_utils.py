@@ -21,8 +21,11 @@ def load_slide_analyses(directory):
                 analyses[filename] = json.load(file)
     return analyses
 
-def split_text_to_the_chunk(cleaned_text, chunk_size, chunk_overlap):
+def split_text_to_the_chunk(text, max_tokens, chunk_overlap):
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=chunk_size, chunk_overlap=chunk_overlap, length_function=len
+        chunk_size=max_tokens,
+        chunk_overlap=chunk_overlap,
+        length_function=len,
+        separators=["\n\n", "\n", " ", ""]
     )
-    return text_splitter.split_text(cleaned_text)
+    return text_splitter.split_text(text)
