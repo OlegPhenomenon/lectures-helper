@@ -56,6 +56,10 @@ class OllamaAnalyzer(SlideAnalyzerBase):
             }
         )
         
+        print('----')
+        print(response)
+        print('----')
+        
         if response.status_code == 200:
             try:
                 result = response.json()
@@ -93,22 +97,18 @@ class OllamaAnalyzer(SlideAnalyzerBase):
         for chunk in chunks:
             for slide in sorted_slides:
                 current_slide, current_analysis = slide
-                last_3_hex_digits = ''.join(random.choices('0123456789ABCDEF', k=3))
-                
-                print('???')
-                print(f"Analyzing slide {current_slide} with chunk {chunk}")
-                print('???')
-                
+                last_10_hex_digits = ''.join(random.choices('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', k=10))
                 
                 result = self.analyze_slide(topic, current_analysis['description'], chunk)
+                
                 if result:
-                    result['slide_number'] = f"{current_slide}-{last_3_hex_digits}"
+                    result['slide_number'] = f"{current_slide}-{last_10_hex_digits}"
                     
                     all_content.append(result)
                     
                     source_data.append({
                         "chunk": chunk,
-                        "slide_number": f"{current_slide}-{last_3_hex_digits}"
+                        "slide_number": f"{current_slide}-{last_10_hex_digits}"
                     })
                     
                     print(json.dumps(result, ensure_ascii=False, indent=2))

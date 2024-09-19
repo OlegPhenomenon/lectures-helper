@@ -113,7 +113,7 @@ class OpenAIGenerateLectureQuestions(SlideAnalyzerBase):
         )
 
     def _parse_slide_number(self, slide_number):
-        return slide_number[:-6].split('.')[0].replace('_analysis', '')
+        return slide_number[:-11].split('.')[0].replace('_analysis', '')
       
     def _process_data(self, data):
         processed_data = {}

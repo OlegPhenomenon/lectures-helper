@@ -80,7 +80,7 @@ class OllamaFormatLectureData(SlideAnalyzerBase):
             
         grouped_data = defaultdict(list)
         for item in data:
-            key = item['slide_number'][:-6]  # Отбрасываем последние 6 символов
+            key = item['slide_number'][:-11]  # Отбрасываем последние 6 символов
             grouped_data[key].append(item)
 
 
@@ -102,9 +102,9 @@ class OllamaFormatLectureData(SlideAnalyzerBase):
         
         all_content = []
         for item in merged_data:
-            last_5_hex_digits = ''.join(random.choices('0123456789ABCDEF', k=5))
+            last_10_hex_digits = ''.join(random.choices('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', k=10))
             result = self.analyze_slide(item['output'])
-            result['slide_number'] = item['slide_number'] + '-' + last_5_hex_digits
+            result['slide_number'] = item['slide_number'] + '-' + last_10_hex_digits
             all_content.append(result)
             
         with open(output_file, 'w') as f:

@@ -80,11 +80,11 @@ class OllamaSummarizeLecture(SlideAnalyzerBase):
           all_content = []
           
           for chunk in chunks:
-              last_5_hex_digits = ''.join(random.choices('0123456789ABCDEF', k=5))
+              last_10_hex_digits = ''.join(random.choices('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', k=10))
               result = self.analyze_slide(chunk)
               
               if result:
-                  result['slide_number'] = f"{slider_name}-{last_5_hex_digits}"
+                  result['slide_number'] = f"{slider_name}-{last_10_hex_digits}"
                   all_content.append(result)
                   
           with open(output_file, 'w') as f:

@@ -105,9 +105,9 @@ class OpenAIAnalyzer(SlideAnalyzerBase):
                 print(f"Приступаем к обработке слайда {current_slide}")
                 print(f"Чанк: {chunk}")
                 
-                last_3_hex_digits = ''.join(random.choices('0123456789ABCDEF', k=3))
+                last_10_hex_digits = ''.join(random.choices('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', k=10))
                 task = {
-                    "custom_id": f"{current_slide}-{last_3_hex_digits}",
+                    "custom_id": f"{current_slide}-{last_10_hex_digits}",
                     "method": "POST",
                     "url": "/v1/chat/completions",
                     "body": {
@@ -128,7 +128,7 @@ class OpenAIAnalyzer(SlideAnalyzerBase):
                 
                 source_data.append({
                     "chunk": chunk,
-                    "slide_number": f"{current_slide}-{last_3_hex_digits}"
+                    "slide_number": f"{current_slide}-{last_10_hex_digits}"
                 })
 
 

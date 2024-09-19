@@ -24,6 +24,10 @@ class OpenAIFormatLectureData(SlideAnalyzerBase):
 
           I will be using this to prepare for my exam, so don't let me down!
           Please, don't write conclusions, only the lecture text.
+          
+        Let me tell you, the goal is not to maximize brevity. The task is to extract truly useful practices and highlight valuable information for me. Your task is to turn the excerpts from the lecture into a real guide.
+
+          Please, do not add multiple headings, or use titles like "reviews", "overview", "conclusions," etc. The thing is, I send you excerpts, and you can't know where the review, overview, conclusion, or beginning is. Avoid such pointless actions.
           </task>
 
           <excerpts from the professor's lecture> {excerpt} </excerpts from the professor's lecture>
@@ -86,7 +90,7 @@ class OpenAIFormatLectureData(SlideAnalyzerBase):
             
         grouped_data = defaultdict(list)
         for item in data:
-            key = item['slide_number'][:-6]  # Отбрасываем последние 6 символов
+            key = item['slide_number'][:-11]
             grouped_data[key].append(item)
             
         merged_data = []
@@ -111,9 +115,9 @@ class OpenAIFormatLectureData(SlideAnalyzerBase):
             slider_name = item['slide_number']
 
             for output in item['output']:
-                last_5_hex_digits = ''.join(random.choices('0123456789ABCDEF', k=5))
+                last_10_hex_digits = ''.join(random.choices('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', k=10))
                 task = {
-                    "custom_id": f"{slider_name}-{last_5_hex_digits}",
+                    "custom_id": f"{slider_name}",
                     "method": "POST",
                     "url": "/v1/chat/completions",
                     "body": {

@@ -7,7 +7,13 @@ class SlideAnalysisProcessor(BaseProcessor):
         analyzer_type = data.get('analyzer_type', 'openai')
         
         transcript = load_transcript(data['transcript_path'])
-        cleaned_text = pre_clean_text(transcript)
+        
+        # print('-----')
+        # print(transcript)
+        # print('-----')
+        
+        # cleaned_text = pre_clean_text(transcript)
+        cleaned_text = transcript
         slide_analyses = load_slide_analyses(data['slide_analyses_path'])
         
         analyzer = AnalyzerFactory.get_analyzer(analyzer_type)

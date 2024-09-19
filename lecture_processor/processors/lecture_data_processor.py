@@ -17,10 +17,10 @@ class LectureDataProcessor(BaseProcessor):
         # Обработка данных
         for item in lecture_data:
             if item['result']:
-                slide_number = item['slide_number'][:-4]  # Удаление последних 4 символов
-                
+                slide_number = item['slide_number']
+                print(slide_number)
                 # Поиск соответствующих chunk'ов в source_data
-                chunks = [sd['chunk'] for sd in source_data if sd['slide_number'][:-4] == slide_number]
+                chunks = [sd['chunk'] for sd in source_data if sd['slide_number'] == slide_number]
                 
                 # Добавление или обновление данных в результирующем словаре
                 if slide_number in result:

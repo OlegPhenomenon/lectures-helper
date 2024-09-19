@@ -62,7 +62,7 @@ def get_lecture_files(lecture_dir: str) -> Dict[str, str]:
         "generated_lecture_questions_path": os.path.join(lecture_dir, "generated_lecture_questions.json"),
         "notes_path": os.path.join(lecture_dir, "notes.txt"),
         "pdf_generation_path": os.path.join(lecture_dir, f"{os.path.basename(lecture_dir)}_result.pdf"),
-        "practice_links_path": os.path.join(lecture_dir, "prictice_links.txt"),  # Исправлено название файла
+        "practice_links_path": os.path.join(lecture_dir, "practice_links.txt"),  # Исправлено название файла
         "practice_content_path": os.path.join(lecture_dir, "practice_content.md"),
         "practice_translated_path": os.path.join(lecture_dir, "practice_content/practice_content_translated.md"),
     }

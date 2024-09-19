@@ -9,7 +9,7 @@ import random
 
 load_dotenv()
 
-batch_file_name = "cloud_native_lessons/1_lecture/summarize_batch_file.json"
+batch_file_name = "courses/cloud_native_lessons/1_lecture/summarize_batch_file.json"
 
 class OpenAISummarizeLecture(SlideAnalyzerBase):
     def __init__(self):
@@ -19,7 +19,12 @@ class OpenAISummarizeLecture(SlideAnalyzerBase):
         Ignore all previous instructions.
         
           <task> You are an experienced specialist in extracting the main essence from the text. Your task is to read the provided lecture excerpts, remove duplicates, and highlight only the core ideas and key information that will help me better understand the lecture for learning purposes.
-          You should not just list key phrases from the text, as that won't be very useful for my learning. It's important to present the information in a way that feels like a study guide. In other words, you need to simplify, structure, and make the lecturer's speech easy to digest and useful for learning. </task>
+          You should not just list key phrases from the text, as that won't be very useful for my learning. It's important to present the information in a way that feels like a study guide. In other words, you need to simplify, structure, and make the lecturer's speech easy to digest and useful for learning. 
+          
+          Let me tell you, the goal is not to maximize brevity. The task is to extract truly useful practices and highlight valuable information for me. Your task is to turn the excerpts from the lecture into a real guide.
+
+          Please, do not add multiple headings, or use titles like "reviews", "overview", "conclusions," etc. The thing is, I send you excerpts, and you can't know where the review, overview, conclusion, or beginning is. Avoid such pointless actions.
+          </task>
 
           <excerpts from the professor's lecture> {excerpt} </excerpts from the professor's lecture>
 
@@ -87,9 +92,9 @@ class OpenAISummarizeLecture(SlideAnalyzerBase):
           chunks = split_text_to_the_chunk(content, 8000, 100)
 
           for chunk in chunks:
-            last_5_hex_digits = ''.join(random.choices('0123456789ABCDEF', k=5))
+            last_10_hex_digits = ''.join(random.choices('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', k=10))
             task = {
-                "custom_id": f"{slider_name}-{last_5_hex_digits}",
+                "custom_id": f"{slider_name}-{last_10_hex_digits}",
                 "method": "POST",
                 "url": "/v1/chat/completions",
                 "body": {
